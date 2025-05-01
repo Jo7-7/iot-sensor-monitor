@@ -26,6 +26,7 @@ A modular big data project that simulates IoT sensor data (e.g., temperature, hu
 
 ## 📁 Project Structure
 
+```bash
 iot-sensor-monitor/
 ├── backend/
 │   └── java/
@@ -46,7 +47,7 @@ iot-sensor-monitor/
 ├── .gitignore
 ├── README.md
 └── LICENSE
-
+```
 
 ---
 
