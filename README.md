@@ -58,8 +58,11 @@ iot-sensor-monitor/
 ```bash
 git clone https://github.com/yourusername/iot-sensor-monitor.git
 cd iot-sensor-monitor
+```
 
-2. Set Up MySQL
+### 2. Set Up MySQL
+
+```bash
 Create a database named iot
 
 Run the SQL schema to create the sensors table:
@@ -75,9 +78,11 @@ CREATE TABLE sensors (
     unit VARCHAR(10),
     timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
 );
+```
 
-3. Python Setup (simulator)
+### 3. Python Setup (simulator)
 
+```bash
 cd simulator
 python -m venv venv
 source venv/bin/activate  # Windows: venv\Scripts\activate
@@ -85,8 +90,11 @@ pip install -r requirements.txt
 python sensor_simulator.py
 
 ⚙️ Edit sensor_simulator.py with your actual MySQL credentials
+```
 
-4. Java Setup (backend API)
+### 4. Java Setup (backend API)
+
+```bash
 Open the backend/java/ folder in IntelliJ
 
 Add MySQL JDBC driver to pom.xml
@@ -99,8 +107,9 @@ Run the application and access your API (e.g., /sensors/latest)
 
 Inserted value: 26.34
 Inserted value: 24.98
+```
 
-📈 Future Improvements
+### 📈 Future Improvements
 Real-time ingestion using MQTT or Kafka
 
 Interactive dashboards using Python or React
@@ -109,7 +118,7 @@ Multi-sensor and multi-device support
 
 Alerts and thresholds on sensor conditions
 
-📄 License
+### 📄 License
 This project is licensed under the MIT License.
 
 ✍️ Author
