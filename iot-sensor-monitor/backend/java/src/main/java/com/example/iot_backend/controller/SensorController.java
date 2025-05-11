@@ -26,15 +26,20 @@ public class SensorController {
                 .orElseGet(() -> ResponseEntity.noContent().build());
     }
 
-    // New paginated endpoint:
     @GetMapping
     public Page<Sensor> allSensors(
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "50") int size
+            @RequestParam(defaultValue = "50") int size,
+            @RequestParam(required = false) String sensorType
     ) {
-        return service.getAllReadings(PageRequest.of(page, size));
+        PageRequest pg = PageRequest.of(page, size);
+        if (sensorType == null || sensorType.isEmpty() || sensorType.equalsIgnoreCase("all")) {
+            return service.getAllReadings(pg);
+        }
+        return service.getReadingsByType(sensorType, pg);
     }
 }
+
 
 
 
