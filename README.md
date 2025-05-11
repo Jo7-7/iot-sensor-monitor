@@ -1,15 +1,20 @@
 # 🌡️ IoT Sensor Data Monitor
 
-A modular big data project that simulates IoT sensor data (e.g., temperature, humidity), stores it in a MySQL database, and exposes the data via a Java REST API. Python is used for simulating and inserting data. Everything is organized for clarity, scalability, and multi-language development.
+A full-stack project that simulates IoT sensor data, stores it in MySQL, exposes it through a Spring Boot REST API, and visualizes it with a React dashboard.
+
 
 ---
 
 ## 🚀 Features
 
-- Simulate real-time IoT sensor data (temperature, humidity, etc.)
-- Store sensor readings in a MySQL database
-- Expose latest sensor readings using a Java-based REST API
-- Clean, modular project structure for collaborative development
+- Simulated temperature & humidity data insertion every 5 seconds
+- MySQL storage with schema in data/sql/schema.sql
+- Spring Boot REST API:
+  - GET /sensors/latest
+  - GET /sensors?page=&size= (paginated)
+- React dashboard with real-time chart and table
+
+
 
 ---
 
@@ -29,98 +34,82 @@ A modular big data project that simulates IoT sensor data (e.g., temperature, hu
 ```bash
 iot-sensor-monitor/
 ├── backend/
-│   └── java/
-│       ├── src/
-│       │   └── main/
-│       │       ├── java/
-│       │       │   └── com/example/iot/
-│       │       │       └── SensorController.java
-│       │       └── resources/
-│       │           └── application.properties
-│       └── pom.xml
+│   └── java/                   # Spring Boot application
+│       ├── pom.xml             # Maven configuration
+│       └── src/
+│           ├── main/
+│           │   ├── java/com/example/iot_backend/  # Java source code
+│           │   │   ├── IotBackendApplication.java
+│           │   │   ├── controller/
+│           │   │   │   └── SensorController.java
+│           │   │   ├── model/
+│           │   │   │   └── Sensor.java
+│           │   │   ├── repository/
+│           │   │   │   └── SensorRepository.java
+│           │   │   └── service/
+│           │   │       └── SensorService.java
+│           │   └── resources/
+│           │       └── application.properties
+│           └── test/java/com/example/iot_backend/  # Unit tests
+│               └── service/
+│                   └── SensorServiceTest.java
 ├── data/
 │   └── sql/
-│       └── schema.sql                # MySQL table schema
+│       └── schema.sql         # MySQL schema for sensors table
 ├── simulator/
-│   ├── sensor_simulator.py          # Sensor simulation script
-│   └── requirements.txt
+│   ├── sensor_simulator.py    # Python script to generate and insert sensor data
+│   ├── requirements.txt       # Python dependencies
+│   └── .env                   # Database credentials
+├── iot-dashboard/             # React frontend dashboard
+│   ├── package.json           # npm config & proxy setup
+│   └── src/
+│       ├── App.js             # Main React component
+│       ├── index.js
+│       └── components/
+│           ├── SensorTable.js
+│           └── SensorChart.js
 ├── .gitignore
-├── README.md
-└── LICENSE
+├── README.md                  # Project overview & setup instructions
+└── LICENSE                    # MIT License
 ```
 
 ---
 
-## 🛠️ Setup Instructions
+## 🚀 Getting Started
 
-### 1. Clone the Repository
-
-```bash
-git clone https://github.com/yourusername/iot-sensor-monitor.git
-cd iot-sensor-monitor
-```
-
-### 2. Set Up MySQL
-
-```bash
-Create a database named iot
-
-Run the SQL schema to create the sensors table:
-
-CREATE DATABASE iot;
-
-USE iot;
-
-CREATE TABLE sensors (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    sensor_type VARCHAR(50),
-    value FLOAT,
-    unit VARCHAR(10),
-    timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
-);
-```
-
-### 3. Python Setup (simulator)
+### 1. Run the Simulator
 
 ```bash
 cd simulator
 python -m venv venv
-source venv/bin/activate  # Windows: venv\Scripts\activate
+source venv/bin/activate      # Windows: venv\Scripts\activate
 pip install -r requirements.txt
 python sensor_simulator.py
-
-⚙️ Edit sensor_simulator.py with your actual MySQL credentials
 ```
 
-### 4. Java Setup (backend API)
+### 2. Start the Backend API
 
 ```bash
-Open the backend/java/ folder in IntelliJ
-
-Add MySQL JDBC driver to pom.xml
-
-Configure DB credentials in application.properties
-
-Run the application and access your API (e.g., /sensors/latest)
-
-📡 Sample Output
-
-Inserted value: 26.34
-Inserted value: 24.98
+cd backend/java
+# Using Maven wrapper:
+./mvnw spring-boot:run
+# Or if you have Maven installed:
+mvn spring-boot:run
 ```
 
-### 📈 Future Improvements
-Real-time ingestion using MQTT or Kafka
+### 3. Launch the React Dashboard
 
-Interactive dashboards using Python or React
+```bash
+cd iot-dashboard
+npm install
+npm start
+```
 
-Multi-sensor and multi-device support
+## 📄 License
 
-Alerts and thresholds on sensor conditions
+This project is licensed under the MIT License. See LICENSE for details.
 
-### 📄 License
-This project is licensed under the MIT License.
 
-✍️ Author
+## ✍️ Author
 Josué KOFFI
 GitHub
