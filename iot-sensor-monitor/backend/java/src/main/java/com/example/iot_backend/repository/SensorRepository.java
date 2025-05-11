@@ -5,16 +5,20 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-import java.util.Optional;
 
+import java.util.Optional;
 
 @Repository
 public interface SensorRepository extends JpaRepository<Sensor, Long> {
     Optional<Sensor> findTopByOrderByTimestampDesc();
 
-    // New: get all readings, newest first, with pagination
+    // New: page through all readings
     Page<Sensor> findAllByOrderByTimestampDesc(Pageable pageable);
+
+    // New: page through readings of a given type
+    Page<Sensor> findBySensorTypeOrderByTimestampDesc(String sensorType, Pageable pageable);
 }
+
 
 
 
