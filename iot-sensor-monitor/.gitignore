@@ -6,3 +6,7 @@ target/
 .DS_Store
 .vscode/
 .idea/
+
+# React dashboard
+iot-dashboard/node_modules/
+iot-dashboard/build/
