@@ -1,4 +1,4 @@
-# 🌡️ IoT Sensor Data Monitor
+🌡️ IoT Sensor Data Monitor
 
 A full-stack project that simulates IoT sensor data, stores it in MySQL, exposes it through a Spring Boot REST API, and visualizes it with a React dashboard.
 
@@ -105,6 +105,11 @@ npm install
 npm start
 ```
 
-✍️ Author
+# 📄 License
+
+This project is licensed under the MIT License. See LICENSE for details.
+
+
+# ✍️ Author
 Josué KOFFI
 GitHub
