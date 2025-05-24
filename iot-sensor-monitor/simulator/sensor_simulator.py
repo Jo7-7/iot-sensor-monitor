@@ -1,54 +1,48 @@
-# Sensor simulator script
-
-import random
-import time
-import pymysql
 import os
+import mysql.connector
+import time
+import random
 from datetime import datetime
-from dotenv import load_dotenv
 
-load_dotenv()
+DB_CONFIG = {
+    'user': os.getenv('DB_USER', 'root'),
+    'password': os.getenv('DB_PASSWORD', 'rootpass'),
+    'host': os.getenv('DB_HOST', 'db'),
+    'port': int(os.getenv('DB_PORT', 3306)),
+    'database': os.getenv('DB_NAME', 'iot')
+}
 
-# Load DB credentials from .env
-DB_HOST = os.getenv("DB_HOST")
-DB_USER = os.getenv("DB_USER")
-DB_PASSWORD = os.getenv("DB_PASSWORD")
-DB_NAME = os.getenv("DB_NAME")
-
-# Function to simulate a sensor reading
-def simulate_sensor(sensor_type):
-    if sensor_type == "temperature":
-        return round(random.uniform(20.0, 30.0), 2), "C"
-    elif sensor_type == "humidity":
-        return round(random.uniform(30.0, 60.0), 2), "%"
-    else:
-        raise ValueError("Unsupported sensor type")
-
-# Connect to MySQL
-connection = pymysql.connect(
-    host=DB_HOST,
-    user=DB_USER,
-    password=DB_PASSWORD,
-    db=DB_NAME,
-    cursorclass=pymysql.cursors.DictCursor
-)
-
-try:
+def wait_for_mysql():
     while True:
-        for sensor in ["temperature", "humidity"]:
-            value, unit = simulate_sensor(sensor)
-            timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        try:
+            conn = mysql.connector.connect(**DB_CONFIG)
+            conn.close()
+            print("Connected to MySQL successfully!")
+            break
+        except mysql.connector.Error as e:
+            print("Waiting for MySQL to be ready...", e)
+            time.sleep(2)
 
-            with connection.cursor() as cursor:
-                sql = "INSERT INTO sensors (sensor_type, value, unit, timestamp) VALUES (%s, %s, %s, %s)"
-                cursor.execute(sql, (sensor, value, unit, timestamp))
-            connection.commit()
+def insert_sensor_reading(sensor_type, value, unit):
+    conn = mysql.connector.connect(**DB_CONFIG)
+    cur = conn.cursor()
+    cur.execute(
+        "INSERT INTO sensors (sensor_type, value, unit, timestamp) VALUES (%s, %s, %s, %s)",
+        (sensor_type, value, unit, datetime.now())
+    )
+    conn.commit()
+    cur.close()
+    conn.close()
 
-            print(f"[{timestamp}] Inserted {sensor}: {value}{unit}")
+if __name__ == "__main__":
+    wait_for_mysql()
+    while True:
+        temp = round(random.uniform(15, 30), 2)
+        humidity = round(random.uniform(30, 70), 2)
+        insert_sensor_reading('temperature', temp, 'C')
+        insert_sensor_reading('humidity', humidity, '%')
+        print(f"Inserted: temperature={temp}C, humidity={humidity}%")
+        time.sleep(1)
 
-        time.sleep(5)  # simulate a reading every 5 seconds
 
-except KeyboardInterrupt:
-    print("Simulation stopped.")
-finally:
-    connection.close()
+
