@@ -10,3 +10,15 @@ target/
 # React dashboard
 iot-dashboard/node_modules/
 iot-dashboard/build/
+
+
+# Ignore Docker volumes/data
+db-data/
+*.log
+
+# Ignore environment variables, secrets, local configs
+.env
+*.env
+
+# Ignore node_modules if you have frontend JS
+node_modules/
