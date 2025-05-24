@@ -1,0 +1,68 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-backend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+      - name: Build with Maven
+        working-directory: ./backend/java
+        run: mvn clean package -DskipTests
+      - name: Upload JAR
+        uses: actions/upload-artifact@v3
+        with:
+          name: backend-jar
+          path: backend/java/target/*.jar
+
+  build-frontend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Install Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+      - name: Install & Build
+        working-directory: ./iot-dashboard
+        run: |
+          npm ci
+          npm run build
+      - name: Upload Build
+        uses: actions/upload-artifact@v3
+        with:
+          name: frontend-build
+          path: iot-dashboard/build
+
+  docker-deploy:
+    needs: [build-backend, build-frontend]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Download artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: backend-jar
+          path: backend/java/target
+      - uses: actions/download-artifact@v3
+        with:
+          name: frontend-build
+          path: iot-dashboard/build
+      - name: Build & Push Docker images
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          push: true
+          tags: |
+            ${{ secrets.DOCKER_REGISTRY }}/iot-backend:latest
+            ${{ secrets.DOCKER_REGISTRY }}/iot-dashboard:latest
+
