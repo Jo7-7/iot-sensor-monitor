@@ -10,14 +10,20 @@ import java.util.Optional;
 
 @Repository
 public interface SensorRepository extends JpaRepository<Sensor, Long> {
+    // Single most recent reading across all sensor types
     Optional<Sensor> findTopByOrderByTimestampDesc();
 
-    // New: page through all readings
+    // Single most recent reading of a specific sensor type
+    Optional<Sensor> findTopBySensorTypeOrderByTimestampDesc(String sensorType);
+
+    // Page through all readings (newest first)
     Page<Sensor> findAllByOrderByTimestampDesc(Pageable pageable);
 
-    // New: page through readings of a given type
+    // Page through readings of a given type (newest first)
     Page<Sensor> findBySensorTypeOrderByTimestampDesc(String sensorType, Pageable pageable);
 }
+
+
 
 
 
