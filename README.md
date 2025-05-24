@@ -1,20 +1,24 @@
 # 🌡️ IoT Sensor Data Monitor
 
-A full-stack project that simulates IoT sensor data, stores it in MySQL, exposes it through a Spring Boot REST API, and visualizes it with a React dashboard.
-
+A full-stack project that simulates IoT sensor data, stores it in MySQL, exposes it through a Spring Boot REST API, and visualizes it with a React dashboard. Live monitoring and dashboards are powered by Prometheus and Grafana.
 
 ---
 
 ## 🚀 Features
 
-- Simulated temperature & humidity data insertion every 5 seconds
-- MySQL storage with schema in data/sql/schema.sql
-- Spring Boot REST API:
-  - GET /sensors/latest
-  - GET /sensors?page=&size= (paginated)
-- React dashboard with real-time chart and table
+Simulated temperature & humidity data insertion every 5 seconds
 
+MySQL storage with schema in data/sql/schema.sql
 
+Spring Boot REST API
+
+GET /sensors/latest (most recent)
+
+GET /sensors?page=&size= (paginated)
+
+React dashboard with real-time chart and table
+
+Live metrics with Prometheus & Grafana (Docker)
 
 ---
 
@@ -22,10 +26,13 @@ A full-stack project that simulates IoT sensor data, stores it in MySQL, exposes
 
 | Component       | Technology          |
 |-----------------|----------------------|
-| Data Simulation | Python (VSCode)     |
+| Data Simulation | Python (Docker)    |
 | Database        | MySQL               |
 | API             | Java (IntelliJ / Spring Boot) |
+| Frontend	 | React    |
+| Monitoring	          | Prometheus, Grafana |
 | Version Control | Git + GitHub        |
+| Orchestration	 | Docker Compose       |
 
 ---
 
@@ -34,50 +41,60 @@ A full-stack project that simulates IoT sensor data, stores it in MySQL, exposes
 ```bash
 iot-sensor-monitor/
 ├── backend/
-│   └── java/                   # Spring Boot application
-│       ├── pom.xml             # Maven configuration
+│   └── java/
+│       ├── pom.xml
 │       └── src/
-│           ├── main/
-│           │   ├── java/com/example/iot_backend/  # Java source code
-│           │   │   ├── IotBackendApplication.java
-│           │   │   ├── controller/
-│           │   │   │   └── SensorController.java
-│           │   │   ├── model/
-│           │   │   │   └── Sensor.java
-│           │   │   ├── repository/
-│           │   │   │   └── SensorRepository.java
-│           │   │   └── service/
-│           │   │       └── SensorService.java
-│           │   └── resources/
-│           │       └── application.properties
-│           └── test/java/com/example/iot_backend/  # Unit tests
-│               └── service/
-│                   └── SensorServiceTest.java
+│           ├── main/java/com/example/iot_backend/
+│           │   ├── IotBackendApplication.java
+│           │   ├── controller/
+│           │   │   └── SensorController.java
+│           │   ├── model/
+│           │   │   └── Sensor.java
+│           │   ├── repository/
+│           │   │   └── SensorRepository.java
+│           │   └── service/
+│           │       └── SensorService.java
+│           └── resources/
+│               └── application.properties
 ├── data/
 │   └── sql/
-│       └── schema.sql         # MySQL schema for sensors table
+│       └── schema.sql
 ├── simulator/
-│   ├── sensor_simulator.py    # Python script to generate and insert sensor data
-│   ├── requirements.txt       # Python dependencies
-│   └── .env                   # Database credentials
-├── iot-dashboard/             # React frontend dashboard
-│   ├── package.json           # npm config & proxy setup
+│   ├── sensor_simulator.py
+│   ├── requirements.txt
+│   └── .env
+├── iot-dashboard/
+│   ├── package.json
 │   └── src/
-│       ├── App.js             # Main React component
+│       ├── App.js
 │       ├── index.js
 │       └── components/
 │           ├── SensorTable.js
 │           └── SensorChart.js
 ├── .gitignore
-├── README.md                  # Project overview & setup instructions
-└── LICENSE                    # MIT License
+├── README.md
+└── LICENSE
 ```
 
 ---
 
 ## 🚀 Getting Started
 
-### 1. Run the Simulator
+### 1. Clone the Repository
+
+```bash
+git clone https://github.com/Jo7-7/iot-sensor-monitor.git
+cd iot-sensor-monitor
+```
+
+### 2. Start All Services with Docker Compose
+(Docker Desktop recommended, no need to start each part manually!)
+
+```bash
+docker-compose up --build
+```
+
+### 3. Run the Simulator (if needed manually)
 
 ```bash
 cd simulator
@@ -87,23 +104,37 @@ pip install -r requirements.txt
 python sensor_simulator.py
 ```
 
-### 2. Start the Backend API
+### 4. Access the Applications
 
 ```bash
-cd backend/java
-# Using Maven wrapper:
-./mvnw spring-boot:run
-# Or if you have Maven installed:
-mvn spring-boot:run
+React Dashboard: http://localhost:3000
+
+Backend API (Swagger/REST): http://localhost:8080/sensors
+
+Prometheus: http://localhost:9090
+
+Grafana: http://localhost:3001
+
+Default credentials:
+
+Username: admin
+
+Password: admin
 ```
 
-### 3. Launch the React Dashboard
 
-```bash
-cd iot-dashboard
-npm install
-npm start
-```
+## 📝 REST API Endpoints
+/sensors/latest — Most recent sensor reading
+
+/sensors?page=&size= — Paginated sensor data
+
+
+## 📊 Live Dashboards
+
+Grafana: Visualizes live data (line charts, gauges, etc.)
+
+Prometheus: Scrapes backend metrics for visualization
+
 
 ## 📄 License
 
@@ -113,3 +144,6 @@ This project is licensed under the MIT License. See LICENSE for details.
 ## ✍️ Author
 Josué KOFFI
 GitHub
+
+## Feel free to contribute, open issues, or star the repo!
+
