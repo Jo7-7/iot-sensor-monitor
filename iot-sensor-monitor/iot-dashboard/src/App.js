@@ -1,5 +1,3 @@
-// src/App.js
-
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import SensorChart from './components/SensorChart';
@@ -17,14 +15,15 @@ function App() {
     document.body.classList.toggle('dark', dark);
   }, [dark]);
 
-  // Fetch & stats
+  // Fetch data and stats
   useEffect(() => {
     const fetchData = async () => {
       try {
         let url = `/sensors?page=${page}&size=${size}`;
         if (filter !== 'all') url += `&sensorType=${filter}`;
         const res = await axios.get(url);
-        const content = res.data.content || [];
+        // Support Spring Data (content) and plain array (legacy API)
+        const content = res.data.content || res.data || [];
         setData(content);
 
         if (content.length) {
@@ -40,8 +39,12 @@ function App() {
             : 0;
 
           setStats({ latest, avgTemp, avgHum });
+        } else {
+          setStats({ latest: null, avgTemp: 0, avgHum: 0 });
         }
       } catch (err) {
+        setData([]);
+        setStats({ latest: null, avgTemp: 0, avgHum: 0 });
         console.error('Error fetching sensor data:', err);
       }
     };
@@ -52,15 +55,9 @@ function App() {
   }, [filter, page, size]);
 
   return (
-    <div
-      className="dashboard-container fade-in"
-      style={{ "--i": 0 }}
-    >
+    <div className="dashboard-container fade-in" style={{ "--i": 0 }}>
       {/* Controls Bar */}
-      <div
-        className="dashboard-controls fade-in"
-        style={{ "--i": 1 }}
-      >
+      <div className="dashboard-controls fade-in" style={{ "--i": 1 }}>
         <div>
           <label>Sensor:&nbsp;</label>
           <select
@@ -106,10 +103,7 @@ function App() {
       </div>
 
       {/* Stats Cards */}
-      <div
-        className="dashboard-stats fade-in"
-        style={{ "--i": 3 }}
-      >
+      <div className="dashboard-stats fade-in" style={{ "--i": 3 }}>
         {stats.latest && (
           <div className="stat-card fade-in" style={{ "--i": 4 }}>
             <h4>Latest ({stats.latest.sensorType})</h4>
@@ -130,21 +124,11 @@ function App() {
       </div>
 
       {/* Main Grid: Chart + Table */}
-      <div
-        className="dashboard-main fade-in"
-        style={{ "--i": 7 }}
-      >
-        <div
-          className="chart-card fade-in"
-          style={{ "--i": 8 }}
-        >
+      <div className="dashboard-main fade-in" style={{ "--i": 7 }}>
+        <div className="chart-card fade-in" style={{ "--i": 8 }}>
           <SensorChart data={data} />
         </div>
-
-        <div
-          className="sensor-table-wrapper fade-in"
-          style={{ "--i": 9 }}
-        >
+        <div className="sensor-table-wrapper fade-in" style={{ "--i": 9 }}>
           <table className="sensor-table">
             <thead>
               <tr>
@@ -172,6 +156,8 @@ function App() {
 }
 
 export default App;
+
+
 
 
 
