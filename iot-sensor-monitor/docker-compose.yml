@@ -1,0 +1,61 @@
+version: "3.8"
+services:
+  db:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpass
+      MYSQL_DATABASE: iot
+    volumes:
+      - db-data:/var/lib/mysql
+    ports:
+      - "3307:3306"
+
+  backend:
+    build: backend/java
+    depends_on: [db]
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/iot
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: rootpass
+    ports:
+      - "8080:8080"
+
+  frontend:
+    build: iot-dashboard
+    depends_on: [backend]
+    ports:
+      - "3000:80"
+
+  prometheus:
+    image: prom/prometheus:latest
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml
+    ports:
+      - "9090:9090"
+
+  grafana:
+    image: grafana/grafana:latest
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    ports:
+      - "3001:3000"
+
+  simulator:
+    build: ./simulator
+    depends_on:
+      - db
+    environment:
+      - DB_HOST=db
+      - DB_PORT=3306
+      - DB_USER=root
+      - DB_PASSWORD=rootpass
+      - DB_NAME=iot
+
+volumes:
+  db-data:
+
+
+
+
+
