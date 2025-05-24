@@ -19,12 +19,26 @@ services:
       SPRING_DATASOURCE_PASSWORD: rootpass
     ports:
       - "8080:8080"
-
   frontend:
-    build: iot-dashboard
+    build:
+      context: iot-dashboard
+      args:
+        REACT_APP_API_URL: ""   # Empty if using NGINX proxy
     depends_on: [backend]
     ports:
       - "3000:80"
+
+
+
+  simulator:
+    build: ./simulator
+    depends_on: [db]
+    environment:
+      - DB_HOST=db
+      - DB_PORT=3306
+      - DB_USER=root
+      - DB_PASSWORD=rootpass
+      - DB_NAME=iot
 
   prometheus:
     image: prom/prometheus:latest
@@ -41,19 +55,9 @@ services:
     ports:
       - "3001:3000"
 
-  simulator:
-    build: ./simulator
-    depends_on:
-      - db
-    environment:
-      - DB_HOST=db
-      - DB_PORT=3306
-      - DB_USER=root
-      - DB_PASSWORD=rootpass
-      - DB_NAME=iot
-
 volumes:
   db-data:
+
 
 
 
