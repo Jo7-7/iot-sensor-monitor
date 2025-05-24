@@ -7,6 +7,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import java.util.List;
 
 @RestController
 @RequestMapping("/sensors")
@@ -27,16 +28,15 @@ public class SensorController {
     }
 
     @GetMapping
-    public Page<Sensor> allSensors(
+    public List<Sensor> allSensors(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "50") int size,
             @RequestParam(required = false) String sensorType
     ) {
-        PageRequest pg = PageRequest.of(page, size);
-        if (sensorType == null || sensorType.isEmpty() || sensorType.equalsIgnoreCase("all")) {
-            return service.getAllReadings(pg);
-        }
-        return service.getReadingsByType(sensorType, pg);
+        // delegate to your new service.findAll(page, size, sensorType)
+        return service.findAll(page, size,
+                sensorType == null || sensorType.isEmpty() ? "all" : sensorType
+        );
     }
 }
 
